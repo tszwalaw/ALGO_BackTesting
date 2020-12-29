@@ -48,8 +48,7 @@ def CalEMA(stock_info, EMA_days):
             last_ema = (data_map[x][1].GetClose()) * smoothing + (last_ema * (1 - smoothing))
             pair = (data_map[x][0], last_ema)
             result.append(pair)
-        
-    print(result)
+
     return result
     
 # Exponential moving average with Volatility Changes
@@ -77,6 +76,5 @@ def CalEMA_Vol(stock_info, EMA_days):
             last_ema = (data_map[x][1].GetClose()) * smoothing + (last_ema * (1 - smoothing))
             pair = (data_map[x][0], last_ema)
             result.append(pair)
-        
-    print(result)
+
     return result
