@@ -1,7 +1,7 @@
 import yfinance as yf
 from StockInfo import StockInfo
 from datetime import datetime, timedelta
-from MACD import CalMACD
+from MACD import *
 
 stock_name = "INTC"
 checking_days = 3650
@@ -13,7 +13,7 @@ stock.StartToLoadData()
 Indicator
 """
 
-MACD = CalMACD(stock, 12, 26)
+MACD = CalMACD(stock, 12, 26, 0)
 
 """
 ALGO
