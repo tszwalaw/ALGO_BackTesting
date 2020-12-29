@@ -1,4 +1,9 @@
-from MA import CalEMA, CalSMA, CalEMA_Vol
+from MA import *
+
+CONST_EMA = 0
+CONST_SMA = 1
+CONST_EMA_VOL = 2
+CONST_EMA_VOL = 3
 
 # Moving average convergence divergence (MACD)
 def CalMACD(stock_info, fast_length, slow_length, mode = 0):
@@ -8,9 +13,9 @@ def CalMACD(stock_info, fast_length, slow_length, mode = 0):
     0: EMA
     1: SMA
     2: EMA_Vol
+    3: SMA_Vol
     """
     
-    print(mode)
     counter_fast = 0
     counter_slow = 0
     MACD = 0
@@ -43,11 +48,58 @@ def CalMACD(stock_info, fast_length, slow_length, mode = 0):
     return result
     
 def CalMA(stock_info, MA_days, mode):
-    if mode == 0:
-        return CalEMA(stock_info, MA_days)
-    if mode == 1:
-        return CalSMA(stock_info, MA_days)
-    if mode == 2:
+    if mode == CONST_EMA:
+        return CalEMA_StockInfo(stock_info, MA_days)
+    if mode == CONST_SMA:
+        return CalSMA_StockInfo(stock_info, MA_days)
+    if mode == CONST_EMA_VOL:
         return CalEMA_Vol(stock_info, MA_days)
+    if mode == CONST_SMA_VOL:
+        return CalSMA_Vol(stock_info, MA_days)
+    
+    return []
+    
+# Signal vs MACD
+def CalSignalLineVsMACD(stock_info, fast_length, slow_length, signal_length, mode = 0):
+    result  = []
+    
+    if signal_length > slow_length or signal_length > fast_length:
+        print("Single line length is smaller than fast / slow length")
+        return result
+    
+    MACD = CalMACD(stock_info, fast_length, slow_length, mode)
+    if len(MACD) == 0:
+        print("MACD is empty")
+        return result
+        
+    signal_line = CalSignalLine(MACD, signal_length, mode)
+    if len(signal_line) == 0:
+        print("Signal line is empty)")
+    
+    MACD_counter = 0
+    signal_line_counter= 0
+
+    while signal_line_counter < len(signal_line):
+        if MACD_counter >= len(MACD):
+            break
+            
+        if signal_line[signal_line_counter][0] != MACD[MACD_counter][0]:
+            MACD_counter += 1
+            continue
+            
+        else:
+            pair = (signal_line[signal_line_counter][0], MACD[MACD_counter][1] - signal_line[signal_line_counter][1])
+            result.append(pair)
+            signal_line_counter += 1
+            MACD_counter += 1
+            
+    return result
+    
+def CalSignalLine(MACD, MA_days, mode):
+    if mode == CONST_EMA or mode == CONST_EMA_VOL:
+        return CalEMA_ValueList(MACD, MA_days)
+        
+    if mode == CONST_SMA or mode == CONST_SMA_VOL:
+        return CalSMA_ValueList(MACD, MA_days)
     
     return []

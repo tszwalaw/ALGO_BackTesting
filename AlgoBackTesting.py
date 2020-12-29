@@ -13,7 +13,8 @@ stock.StartToLoadData()
 Indicator
 """
 
-MACD = CalMACD(stock, 12, 26, 0)
+MACD = CalMACD(stock, 12, 26, 3)
+signal_line_vs_MACD = CalSignalLineVsMACD(stock, 12, 26, 9, CONST_EMA)
 
 """
 ALGO
