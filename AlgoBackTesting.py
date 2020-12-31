@@ -18,6 +18,9 @@ Indicator
 MACD = CalMACD(stock, 12, 26, CONST_MACD_EMA)
 signal_line_vs_MACD = CalSignalLineVsMACD(stock, 12, 26, 9, CONST_MACD_EMA)
 
+#RSI
+RSI = CalRSI(stock, 14, CONST_RSI_SMA)
+
 """
 ALGO
 """
