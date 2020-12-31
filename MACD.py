@@ -40,13 +40,13 @@ def CalMACD(stock_info, fast_length, slow_length, mode = CONST_MACD_EMA):
     return result
     
 def CalMA(stock_info, MA_days, mode):
-    if mode == CONST_EMA:
+    if mode == CONST_MACD_EMA:
         return CalEMA_StockInfo(stock_info, MA_days)
-    if mode == CONST_SMA:
+    if mode == CONST_MACD_SMA:
         return CalSMA_StockInfo(stock_info, MA_days)
-    if mode == CONST_EMA_VOL:
+    if mode == CONST_MACD_EMA_VOL:
         return CalEMA_Vol(stock_info, MA_days)
-    if mode == CONST_SMA_VOL:
+    if mode == CONST_MACD_SMA_VOL:
         return CalSMA_Vol(stock_info, MA_days)
     
     return []
@@ -88,10 +88,10 @@ def CalSignalLineVsMACD(stock_info, fast_length, slow_length, signal_length, mod
     return result
     
 def CalSignalLine(MACD, MA_days, mode):
-    if mode == CONST_EMA or mode == CONST_EMA_VOL:
+    if mode == CONST_MACD_EMA or mode == CONST_MACD_EMA_VOL:
         return CalEMA_ValueList(MACD, MA_days)
         
-    if mode == CONST_SMA or mode == CONST_SMA_VOL:
+    if mode == CONST_MACD_SMA or mode == CONST_MACD_SMA_VOL:
         return CalSMA_ValueList(MACD, MA_days)
     
     return []
