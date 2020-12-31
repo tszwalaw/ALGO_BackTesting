@@ -1,20 +1,12 @@
 from MA import *
 
-CONST_EMA = 0
-CONST_SMA = 1
-CONST_EMA_VOL = 2
-CONST_EMA_VOL = 3
+CONST_MACD_EMA = 0
+CONST_MACD_SMA = 1
+CONST_MACD_EMA_VOL = 2
+CONST_MACD_EMA_VOL = 3
 
 # Moving average convergence divergence (MACD)
-def CalMACD(stock_info, fast_length, slow_length, mode = 0):
-
-    """
-    MODE
-    0: EMA
-    1: SMA
-    2: EMA_Vol
-    3: SMA_Vol
-    """
+def CalMACD(stock_info, fast_length, slow_length, mode = CONST_MACD_EMA):
     
     counter_fast = 0
     counter_slow = 0
@@ -60,7 +52,7 @@ def CalMA(stock_info, MA_days, mode):
     return []
     
 # Signal vs MACD
-def CalSignalLineVsMACD(stock_info, fast_length, slow_length, signal_length, mode = 0):
+def CalSignalLineVsMACD(stock_info, fast_length, slow_length, signal_length, mode = CONST_MACD_EMA):
     result  = []
     
     if signal_length > slow_length or signal_length > fast_length:
