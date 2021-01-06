@@ -2,120 +2,99 @@ import matplotlib.pyplot as plt
 from datetime import datetime, timedelta
 from datetime import date
 
+from SubChartInfo import *
+
 
 class LineChart:
-    
+
     def __init__(self):
-        self.stock_name = []
-        # Main Chart
-        self.main_data = []
-        self.main_chart_line_name = []
-        # Sub Chart
-        self.indicator_name = []
-        self.sub_data = []
-        self.horizontal_line = []
-        self.sub_chart_line_name = []
-        self.sub_chart_total = 0
+        self.stock_name = ""
+        self.main_chart = []
+        self.sub_chart_info = []
         
-    def NewChart(self, stock_name, indicator_name, sub_chart_total):
+    def NewChart(self, stock_name):
         self.stock_name = stock_name
-        self.indicator_name = indicator_name
-        self.sub_chart_total = sub_chart_total
+        self.main_chart = []
+        self.sub_chart_info = []
         
-        # Main Chart Reset
-        self.main_data = []
-        self.main_chart_line_name = []
-        # Sub Chart Reset
-        self.sub_data = []
-        self.horizontal_line = []
-        self.sub_chart_line_name = []
-
-        for x in range(sub_chart_total):
-            self.sub_data.append([])
-            self.horizontal_line.append([])
-            self.sub_chart_line_name.append([])
+    def AddToMainChart(self, name, data):
+        chart_data = ChartData(name, data)
+        self.main_chart.append(chart_data)
         
-    def AddToMainChart(self, data, name):
-        self.main_data.append(data)
-        self.main_chart_line_name.append(name)
-
-    def AddToSubChart(self, data, sub_chart_num, sub_chart_name):
-        if sub_chart_num < 0 or sub_chart_num >= self.sub_chart_total:
-            return
-        self.sub_data[sub_chart_num].append(data)
-        self.sub_chart_line_name[sub_chart_num].append(sub_chart_name)
-        
-    def AddHorizontalLineToSubChart(self, value, sub_chart_num):
-        if sub_chart_num < 0 or sub_chart_num >= self.sub_chart_total:
-            return
-        self.horizontal_line[sub_chart_num].append(value)
+    def AddNewSubChartInfo(self, sub_chart_info):
+        self.sub_chart_info.append(sub_chart_info)
         
     def PlotChart(self):
     
-        
         self.AdjData()
-        fig, chart = plt.subplots(self.sub_chart_total+1, 1)
+            
+        fig, chart = plt.subplots(len(self.sub_chart_info)+1, 1)
         fig.canvas.set_window_title(self.stock_name)
         
+        # Main Chart
         chart[0].set_title(self.stock_name)
         chart[0].set_xlabel("Date")
         chart[0].set_ylabel("Price")
         
-        for k in range(len(self.main_data)):
-            x,y = zip(*self.main_data[k])
-            chart[0].plot(x, y, label = self.main_chart_line_name[k])
+        for k in range(len(self.main_chart)):
+            x,y = zip(*self.main_chart[k].GetData())
+            chart[0].plot(x, y, label = self.main_chart[k].GetChartName())
 
         chart[0].legend()
-            
-            
-        for t in range(self.sub_chart_total):
-            chart[t+1].set_title(self.indicator_name[t])
+        
+        # Sub Chart(s)
+        for t in range(len(self.sub_chart_info)):
+            sub_chart = self.sub_chart_info[t]
+            chart[t+1].set_title(sub_chart.GetName())
             chart[t+1].set_xlabel("Date")
             chart[t+1].set_ylabel("Value")
-            
-            for k in range(len(self.sub_data[t])):
-                x,y = zip(*self.sub_data[t][k])
-                chart[t+1].plot(x, y, label = self.sub_chart_line_name[t][k])
-                
+    
+            for k in range(len(sub_chart.GetChartData())):
+                x,y = zip(*sub_chart.GetChartData()[k].GetData())
+                chart[t+1].plot(x, y, label = sub_chart.GetChartData()[k].GetChartName())
+
             chart[t+1].legend()
-                
-            if len(self.horizontal_line[t]) > 0:
-                for x in self.horizontal_line[t]:
+            
+            if len(sub_chart.horizontal_line) > 0:
+                for x in sub_chart.horizontal_line:
                     chart[t+1].axhline(y=x, color='r', linestyle='-.')
-        
+                    
         fig.autofmt_xdate()
+
         
     def ShowChart(self):
-
         plt.show()
         
     def AdjData(self):
         start_date = date.fromisoformat('1970-01-01')
-        for x in range(len(self.main_data)):
-            if self.main_data[x][0][0] > start_date:
-                start_date = self.main_data[x][0][0]
-        for x in range(len(self.sub_data)):
-            for y in range(len(self.sub_data[x])):
-                if self.sub_data[x][y][0][0] > start_date:
-                    start_date = self.sub_data[x][y][0][0]
-                
-        for x in range(len(self.main_data)):
+        
+        
+        
+        for x in range(len(self.main_chart)):
+            if self.main_chart[x].GetData()[0][0] > start_date:
+                start_date = self.main_chart[x].GetData()[0][0]
+        for x in range(len(self.sub_chart_info)):
+            for y in range(len(self.sub_chart_info[x].GetChartData())):
+                if self.sub_chart_info[x].GetChartData()[y].GetData()[0][0] > start_date:
+                    start_date = self.sub_chart_info[x].GetChartData()[y].GetData()[0][0]
+
+        for x in range(len(self.main_chart)):
             while True:
-                if self.main_data[x][0][0] != start_date:
-                    self.main_data[x].pop(0)
+                if self.main_chart[x].GetData()[0][0] != start_date:
+                    self.main_chart[x].GetData().pop(0)
                 else:
                     break
-                if len(self.main_data[x]) == 0:
+                if len(self.main_chart[x].GetData()) == 0:
                     break
-        
-        for x in range(len(self.sub_data)):
-            for y in range(len(self.sub_data[x])):
+
+        for x in range(len(self.sub_chart_info)):
+            for y in range(len(self.sub_chart_info[x].GetChartData())):
                 while True:
-                    if self.sub_data[x][y][0][0] != start_date:
-                        self.sub_data[x][y].pop(0)
+                    if self.sub_chart_info[x].GetChartData()[y].GetData()[0][0] != start_date:
+                        self.sub_chart_info[x].GetChartData()[y].GetData().pop(0)
                     else:
                         break
-                    if len(self.sub_data[x][y]) == 0:
+                    if len(self.sub_chart_info[x].GetChartData()[y].GetData()) == 0:
                         break
                 
             
