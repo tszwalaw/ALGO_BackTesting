@@ -6,6 +6,7 @@ from RSI import *
 from LineChart import *
 from ChartData import *
 from SubChartInfo import *
+from StochasticOscillator import *
 
 # Chart(s)
 line_chart = LineChart()
@@ -38,6 +39,13 @@ RSI_chart.AddChartData("RSI SMA 14", CalRSI(INTC, 14, CONST_RSI_SMA))
 RSI_chart.AddHorizontalLine(30)
 RSI_chart.AddHorizontalLine(70)
 line_chart.AddNewSubChartInfo(RSI_chart)
+
+# Set Sub Chart - SO
+SO_chart = SubChartInfo("SO")
+SO_chart.AddChartData("SO 14 Days", CalStochasticOscillator(INTC, 14, CONST_SO_HIGH_LOW_AVG))
+SO_chart.AddHorizontalLine(20)
+SO_chart.AddHorizontalLine(80)
+line_chart.AddNewSubChartInfo(SO_chart)
 
 line_chart.PlotChart()
 
